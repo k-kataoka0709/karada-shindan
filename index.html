@@ -429,8 +429,9 @@ const types = {
       '力仕事はできるのに体が重い'
     ],
     symptoms: ['体が硬い', '食べすぎ', '高止まり体重', '便秘気味', 'がっちり体型'],
-    advice: 'ストレッチや有酸素運動で<strong>硬くなった筋肉と脂肪を柔らかくほぐす</strong>ことから。食事は量より質の見直しが効果的です。',
-    showProduct: false,
+    advice: 'ストレッチや有酸素運動で<strong>硬くなった筋肉と脂肪を柔らかくほぐす</strong>ことから。食事は量より質の見直しが効果的です。実は硬い脂肪の下にも<strong>余分な水分が溜まっている</strong>ケースが多く、代謝を内側から上げることで硬い脂肪にもアプローチできます。',
+    showProduct: true,
+    productAngle: '硬い脂肪の下に隠れた「水」にアプローチ。代謝を内側から上げることで、運動やストレッチの効果も出やすい体づくりをサポートします。',
     compat: { good: '人間ダム', bad: '深夜のご褒美モンスター', comment: '人間ダムと運動を始めると互いにいい刺激に。' }
   },
   stressbutori: {
@@ -449,8 +450,9 @@ const types = {
       '食べた後に後悔するのにまた食べてしまう'
     ],
     symptoms: ['過食傾向', 'お腹周り', '自律神経', '睡眠の質低下', '甘いもの依存'],
-    advice: '<strong>食事の内容よりもまずストレスマネジメント</strong>が先。睡眠の質を上げ、自律神経を整えることで、過食のトリガーそのものを減らしましょう。',
-    showProduct: false,
+    advice: '<strong>食事の内容よりもまずストレスマネジメント</strong>が先。睡眠の質を上げ、自律神経を整えることで、過食のトリガーそのものを減らしましょう。ストレス太りは<strong>自律神経の乱れ→むくみ→代謝低下</strong>の連鎖を起こしやすく、体の巡りを整えることも重要です。',
+    showProduct: true,
+    productAngle: 'ストレス太りの裏に隠れた「むくみ・代謝低下」にアプローチ。体の巡りを整えることで、過食が減った時にちゃんと体重に反映される体づくりを。',
     compat: { good: '歩くスポンジ', bad: '鎧脂肪の主', comment: '歩くスポンジとはリラックス系の対策が合う。' }
   },
   yuragimix: {
@@ -619,9 +621,9 @@ function showResult() {
         </div>
       </div>
 
-      ${type.showProduct ? `
       <div class="recommend-card">
         <div class="rec-label">📋 あなたのタイプにおすすめ</div>
+        ${type.productAngle ? `<div class="rec-points" style="font-size:13px;line-height:1.7;margin-bottom:14px;color:var(--text-sub)">${type.productAngle}</div>` : ''}
         <div class="rec-product">
           <div class="rec-product-img">🏺</div>
           <div class="rec-product-info">
@@ -639,14 +641,6 @@ function showResult() {
         </div>
         <a href="https://dainichido.co.jp/lp/1000nen001/index.html" target="_blank" class="cta-btn">詳しくチェックする →</a>
       </div>
-      ` : `
-      <div class="recommend-card">
-        <div class="rec-label">📋 ワンポイントアドバイス</div>
-        <div class="rec-product-info" style="padding:4px">
-          <div class="rec-points" style="line-height:1.8;font-size:14px">${type.advice}</div>
-        </div>
-      </div>
-      `}
 
       <div class="share-card">
         <div class="share-card-title">結果をシェアして友達も診断 👇</div>
