@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="あなたは何太り？ 30秒カラダ診断">
+<meta property="og:description" content="6つの体質タイプからあなたの太り方のクセを診断。対策が変わります。">
+<title>あなたは何太り？ 30秒カラダ診断</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Shippori+Mincho:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0ea;
+  --card: #ffffff;
+  --accent: #2e7d6f;
+  --accent-light: #e8f5f1;
+  --accent-dark: #1a5c50;
+  --text: #2c2420;
+  --text-sub: #7a7067;
+  --border: #e0d8cf;
+  --shadow: 0 8px 32px rgba(44,36,32,0.08);
+  --radius: 16px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(74,144,217,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(212,114,74,0.05) 0%, transparent 50%);
+  pointer-events:none; z-index:0;
+}
+.container { position:relative; z-index:1; max-width:480px; margin:0 auto; padding:24px 16px 80px; }
+.hidden { display:none !important; }
+
+/* ===== HERO ===== */
+.hero { text-align:center; padding:44px 0 32px; animation:fadeUp .8s ease-out; }
+.hero-badge {
+  display:inline-block; font-size:11px; font-weight:700; letter-spacing:.15em;
+  color:var(--accent); background:var(--accent-light); padding:6px 18px; border-radius:100px; margin-bottom:20px;
+}
+.hero h1 { font-family:'Shippori Mincho',serif; font-size:26px; font-weight:800; line-height:1.45; }
+.hero-sub { font-size:14px; color:var(--text-sub); margin-top:12px; line-height:1.7; }
+.hero-types {
+  display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:24px 0 20px;
+}
+.hero-type-pill {
+  font-size:11px; font-weight:700; padding:5px 12px; border-radius:100px;
+  border:1.5px solid var(--border); color:var(--text-sub); background:var(--card);
+}
+.hero-meta { display:flex; gap:16px; justify-content:center; margin:8px 0 28px; }
+.hero-meta span {
+  font-size:12px; color:var(--text-sub); display:flex; align-items:center; gap:4px;
+}
+.start-btn {
+  display:inline-block; padding:16px 56px; border:none; border-radius:14px;
+  background:linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color:#fff; font-family:inherit; font-size:16px; font-weight:700;
+  cursor:pointer; box-shadow:0 4px 20px rgba(46,125,111,.3);
+  transition: all .25s ease; text-decoration:none;
+}
+.start-btn:hover { transform:translateY(-2px); box-shadow:0 6px 28px rgba(46,125,111,.4); }
+.start-btn:active { transform:scale(.97); }
+
+/* ===== PROGRESS ===== */
+.progress-wrap {
+  background:var(--card); border-radius:100px; padding:3px; margin-bottom:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04); height:8px;
+}
+.progress-bar {
+  height:100%; border-radius:100px;
+  background:linear-gradient(90deg, #4a90d9, var(--accent));
+  transition:width .5s cubic-bezier(.4,0,.2,1); width:0%;
+}
+.progress-label { text-align:right; font-size:12px; color:var(--text-sub); margin-bottom:6px; font-weight:500; }
+
+/* ===== QUESTION ===== */
+.question-card {
+  background:var(--card); border-radius:var(--radius); padding:28px 22px;
+  box-shadow:var(--shadow); animation:slideIn .4s ease-out; position:relative; overflow:hidden;
+}
+.question-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, #4a90d9, var(--accent), #d4724a);
+}
+.q-number { font-size:11px; font-weight:700; color:var(--accent); letter-spacing:.1em; margin-bottom:10px; }
+.q-text { font-family:'Shippori Mincho',serif; font-size:17px; font-weight:600; line-height:1.6; margin-bottom:20px; }
+.options { display:flex; flex-direction:column; gap:8px; }
+.option-btn {
+  display:flex; align-items:center; gap:12px; width:100%; padding:14px 16px;
+  border:2px solid var(--border); border-radius:12px; background:var(--bg);
+  font-family:inherit; font-size:14px; font-weight:500; color:var(--text);
+  cursor:pointer; transition:all .2s ease; text-align:left; line-height:1.5;
+}
+.option-btn:hover { border-color:var(--accent); background:var(--accent-light); transform:translateY(-1px); }
+.option-btn:active { transform:scale(.98); }
+.option-btn .icon {
+  font-size:18px; flex-shrink:0; width:32px; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--card); border-radius:8px;
+}
+
+/* ===== RESULT ===== */
+.result-section { animation:fadeUp .6s ease-out; }
+.result-card {
+  background:var(--card); border-radius:var(--radius); padding:32px 22px;
+  box-shadow:var(--shadow); text-align:center; position:relative; overflow:hidden; margin-bottom:16px;
+}
+.result-type-icon { font-size:48px; margin-bottom:12px; display:block; }
+.result-type-badge {
+  display:inline-block; font-size:11px; font-weight:700; letter-spacing:.12em;
+  padding:5px 16px; border-radius:100px; margin-bottom:12px;
+}
+.result-title { font-family:'Shippori Mincho',serif; font-size:26px; font-weight:800; margin-bottom:4px; }
+.result-subtitle { font-size:13px; color:var(--text-sub); margin-bottom:20px; line-height:1.5; }
+
+/* Meters */
+.meter-group { margin:16px 0 20px; }
+.meter-row { display:flex; align-items:center; gap:10px; margin:6px 0; padding:10px 14px; background:var(--bg); border-radius:10px; }
+.meter-label { font-size:11px; font-weight:700; white-space:nowrap; min-width:56px; }
+.meter-bar-wrap { flex:1; height:6px; border-radius:100px; background:var(--border); overflow:hidden; }
+.meter-bar-fill { height:100%; border-radius:100px; transition:width 1.2s cubic-bezier(.25,.46,.45,.94); width:0%; }
+.meter-value { font-size:13px; font-weight:900; min-width:34px; text-align:right; }
+
+/* Aruaru */
+.aruaru-section { margin:20px 0; text-align:left; }
+.aruaru-title { font-size:12px; font-weight:700; color:var(--text-sub); margin-bottom:10px; letter-spacing:.08em; }
+.aruaru-list { display:flex; flex-direction:column; gap:6px; }
+.aruaru-item {
+  font-size:13px; line-height:1.6; padding:10px 14px; background:var(--bg);
+  border-radius:10px; position:relative; padding-left:32px;
+}
+.aruaru-item::before { content:'✓'; position:absolute; left:12px; top:10px; color:var(--accent); font-weight:700; font-size:12px; }
+
+/* Desc */
+.result-desc { font-size:14px; line-height:1.8; text-align:left; margin:16px 0; padding:0 2px; }
+.result-desc strong { color:var(--accent); }
+
+/* Symptoms */
+.symptom-tags { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:16px 0; }
+.symptom-tag { font-size:11px; font-weight:700; padding:5px 12px; border-radius:100px; background:var(--bg); color:var(--text-sub); }
+
+/* Compatibility */
+.compat-section {
+  margin:20px 0 0; padding:16px; background:var(--bg); border-radius:12px; text-align:left;
+}
+.compat-title { font-size:12px; font-weight:700; color:var(--text-sub); margin-bottom:8px; letter-spacing:.08em; }
+.compat-item { font-size:13px; line-height:1.7; margin:4px 0; }
+
+/* ===== RECOMMEND ===== */
+.recommend-card {
+  background:var(--card); border-radius:var(--radius); padding:24px 22px;
+  box-shadow:var(--shadow); margin-bottom:16px; position:relative; overflow:hidden;
+}
+.recommend-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--accent), #4a90d9);
+}
+.rec-label { font-size:11px; font-weight:700; letter-spacing:.12em; color:var(--accent); margin-bottom:12px; }
+.rec-product { display:flex; gap:14px; }
+.rec-product-img {
+  width:72px; height:90px; border-radius:10px;
+  background:linear-gradient(135deg, var(--accent-light), #e3eef9);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:26px;
+}
+.rec-product-info h3 { font-family:'Shippori Mincho',serif; font-size:16px; font-weight:800; margin-bottom:3px; }
+.rec-product-info .rec-cat { font-size:11px; color:var(--text-sub); margin-bottom:6px; }
+.rec-product-info .rec-points { font-size:13px; line-height:1.6; }
+.rec-price {
+  display:flex; align-items:baseline; gap:8px; margin:14px 0 12px;
+  padding:10px 14px; background:var(--bg); border-radius:10px;
+}
+.rec-price .original { font-size:12px; color:var(--text-sub); text-decoration:line-through; }
+.rec-price .sale { font-size:20px; font-weight:900; color:#d4724a; }
+.rec-price .tax { font-size:11px; color:var(--text-sub); }
+.cta-btn {
+  display:block; width:100%; padding:14px; border:none; border-radius:12px;
+  background:linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color:#fff; font-family:inherit; font-size:15px; font-weight:700;
+  cursor:pointer; text-align:center; text-decoration:none;
+  box-shadow:0 4px 16px rgba(46,125,111,.3); transition:all .25s ease;
+}
+.cta-btn:hover { transform:translateY(-2px); }
+
+/* ===== SHARE ===== */
+.share-card {
+  background:var(--card); border-radius:var(--radius); padding:24px 22px;
+  box-shadow:var(--shadow); text-align:center; margin-bottom:16px;
+}
+.share-card-title { font-size:14px; font-weight:700; margin-bottom:4px; }
+.share-card-sub { font-size:12px; color:var(--text-sub); margin-bottom:16px; }
+.share-preview {
+  border-radius:12px; overflow:hidden; margin-bottom:16px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08); max-width:360px; margin-left:auto; margin-right:auto;
+}
+.share-preview canvas { display:block; width:100%; height:auto; }
+.share-buttons { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.share-btn {
+  padding:10px 20px; border:2px solid var(--border); border-radius:10px;
+  background:var(--card); font-family:inherit; font-size:13px; font-weight:700;
+  color:var(--text); cursor:pointer; transition:all .2s ease;
+}
+.share-btn:hover { border-color:var(--accent); background:var(--accent-light); }
+.share-btn.primary {
+  border-color:var(--accent); background:var(--accent); color:#fff;
+}
+.share-btn.primary:hover { background:var(--accent-dark); }
+
+.retry-btn {
+  display:inline-block; margin-top:12px; padding:8px 20px; border:none; background:none;
+  font-family:inherit; font-size:13px; color:var(--text-sub); cursor:pointer;
+  text-decoration:underline; text-underline-offset:3px;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideIn { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+
+@media(max-width:380px){
+  .hero h1{font-size:22px}
+  .question-card{padding:22px 16px}
+  .result-card{padding:24px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ===== HERO ===== -->
+  <div id="hero" class="hero">
+    <div class="hero-badge">30秒 カラダ診断</div>
+    <h1>あなたは<br>何太り？</h1>
+    <p class="hero-sub">10の質問で、あなたの体質を6タイプに分類。<br>太り方のクセがわかれば、対策が変わります。</p>
+    <div class="hero-types">
+      <span class="hero-type-pill">🚰 人間ダム</span>
+      <span class="hero-type-pill">🧽 歩くスポンジ</span>
+      <span class="hero-type-pill">🧊 末端冷凍女</span>
+      <span class="hero-type-pill">🛡️ 鎧脂肪の主</span>
+      <span class="hero-type-pill">🍫 深夜のご褒美モンスター</span>
+      <span class="hero-type-pill">🎭 体質迷子</span>
+    </div>
+    <div class="hero-meta">
+      <span>⏱ 約30秒</span>
+      <span>📊 10問</span>
+      <span>🔒 データ保存なし</span>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">無料で診断する</button>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div id="quiz-section" class="hidden">
+    <div class="progress-label" id="progress-label">1 / 10</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    <div id="question-container"></div>
+  </div>
+
+  <!-- ===== RESULT ===== -->
+  <div id="result-section" class="hidden"></div>
+
+</div>
+
+<script>
+// ========== QUESTIONS ==========
+const questions = [
+  {
+    q: "夕方になると靴がキツく感じますか？",
+    opts: [
+      { text: "ほぼ毎日キツい", icon: "💧", scores: { water:3, cold:1 } },
+      { text: "たまにキツい", icon: "🔹", scores: { water:1 } },
+      { text: "ほとんど感じない", icon: "🔥", scores: { kata:2 } }
+    ]
+  },
+  {
+    q: "お腹や二の腕の感触は？",
+    opts: [
+      { text: "ぷよぷよ・水っぽく柔らかい", icon: "💧", scores: { water:3 } },
+      { text: "柔らかいけどつまめる", icon: "🔹", scores: { water:1, stress:1 } },
+      { text: "硬くてあまりつまめない", icon: "🔥", scores: { kata:3 } }
+    ]
+  },
+  {
+    q: "トイレの回数について",
+    opts: [
+      { text: "水分を摂る割にトイレが少ない", icon: "💧", scores: { water:3, cold:1 } },
+      { text: "普通だと思う", icon: "🔹", scores: {} },
+      { text: "頻繁に行く方", icon: "⚡", scores: { stress:2 } }
+    ]
+  },
+  {
+    q: "手足の冷えについて",
+    opts: [
+      { text: "一年中手足が冷たい", icon: "🧊", scores: { cold:3, water:1 } },
+      { text: "冬や冷房で冷える", icon: "🔹", scores: { cold:1 } },
+      { text: "冷えは感じない", icon: "🔥", scores: { kata:1 } }
+    ]
+  },
+  {
+    q: "汗のかき方は？",
+    opts: [
+      { text: "じっとり・べたつく汗を大量にかく", icon: "💧", scores: { water:2 } },
+      { text: "運動すれば普通にかく", icon: "🔹", scores: {} },
+      { text: "あまり汗をかかない体質", icon: "🧊", scores: { cold:2, water:1 } }
+    ]
+  },
+  {
+    q: "朝起きた時の顔のむくみは？",
+    opts: [
+      { text: "よくむくんでいる（目が腫れぼったい）", icon: "💧", scores: { water:3 } },
+      { text: "日によってまちまち", icon: "🌊", scores: { yuragi:2 } },
+      { text: "むくみはほぼない", icon: "🔥", scores: { kata:1 } }
+    ]
+  },
+  {
+    q: "ストレスを感じた時、体に出やすい変化は？",
+    opts: [
+      { text: "食欲が増して食べすぎる", icon: "⚡", scores: { stress:3 } },
+      { text: "体がだるくなる・むくむ", icon: "💧", scores: { water:2, stress:1 } },
+      { text: "あまり体には出ない", icon: "🔹", scores: { kata:1 } }
+    ]
+  },
+  {
+    q: "体調や体重の変動パターンは？",
+    opts: [
+      { text: "季節や生理周期で大きく変わる", icon: "🌊", scores: { yuragi:3 } },
+      { text: "じわじわ増え続けている", icon: "💧", scores: { water:2 } },
+      { text: "ほとんど変わらない（高止まり）", icon: "🔥", scores: { kata:2 } }
+    ]
+  },
+  {
+    q: "疲れやすさについて",
+    opts: [
+      { text: "体が重だるく、すぐ疲れる", icon: "💧", scores: { water:2, cold:1 } },
+      { text: "頭は疲れるが体は平気", icon: "⚡", scores: { stress:2 } },
+      { text: "体力はある方", icon: "🔥", scores: { kata:1 } }
+    ]
+  },
+  {
+    q: "食事の傾向は？",
+    opts: [
+      { text: "味が濃いもの・塩辛いものが好き", icon: "💧", scores: { water:2 } },
+      { text: "甘いもの・間食がやめられない", icon: "⚡", scores: { stress:2, yuragi:1 } },
+      { text: "量を食べすぎる（早食い・大盛り）", icon: "🔥", scores: { kata:2 } }
+    ]
+  }
+];
+
+// ========== 6 TYPES ==========
+const types = {
+  tamekomimizu: {
+    id: 'tamekomimizu',
+    name: '人間ダム',
+    icon: '🚰',
+    tagline: '体に水を溜め続けるオンナ',
+    color: '#4a90d9',
+    colorLight: '#e3eef9',
+    colorDark: '#1a5a8f',
+    desc: '体内の水分代謝が極端に低下し、余分な水分をため込みやすい体質。むくみが慢性化し、ぷよぷよとした脂肪がつきやすいのが特徴です。',
+    aruaru: [
+      '夕方になると靴がパンパンで別人の足みたい',
+      'マッサージの翌日だけ「痩せた？」と言われる',
+      '水を飲んでも太る気がして水分を控えがち',
+      '指で押すと跡がしばらく残る'
+    ],
+    symptoms: ['慢性むくみ', '体が重だるい', 'ぷよぷよ脂肪', '汗がべたつく', '疲れやすい'],
+    advice: '体内の水分バランスを整えることが最優先。食事制限やハードな運動よりも、<strong>水はけの良い体</strong>を作ることで、むくみ→代謝低下→脂肪蓄積の悪循環を断ち切れます。',
+    showProduct: true,
+    compat: { good: '鎧脂肪の主', bad: '末端冷凍女', comment: '鎧脂肪タイプと一緒に運動すると刺激になる。末端冷凍女とは悪化しやすいので注意。' }
+  },
+  jinwarimizu: {
+    id: 'jinwarimizu',
+    name: '歩くスポンジ',
+    icon: '🧽',
+    tagline: '気づかないうちに水を吸ってるオンナ',
+    color: '#5aafa5',
+    colorLight: '#e0f5f1',
+    colorDark: '#2a7a70',
+    desc: '急激なむくみはないものの、じわじわと水分が溜まっている慢性型。冷えとセットで起きることが多く、代謝が緩やかに低下しています。',
+    aruaru: [
+      '太った自覚がないのに服のサイズが上がった',
+      '「最近顔丸くなった？」と言われてショック',
+      '夏でも足先が冷たい時がある',
+      '体重は変わらないのにラインが崩れてきた'
+    ],
+    symptoms: ['じわじわむくみ', '冷え性', '代謝低下', '体型の変化', '疲労感'],
+    advice: '自覚しにくいのがこのタイプの厄介なところ。<strong>水分代謝を内側から整える</strong>ことで、じわじわ蓄積を逆流させましょう。冷え対策も同時に行うとより効果的。',
+    showProduct: true,
+    compat: { good: '深夜のご褒美モンスター', bad: '体質迷子', comment: 'ご褒美モンスターとは食事改善を一緒にやると続きやすい。' }
+  },
+  hiebutori: {
+    id: 'hiebutori',
+    name: '末端冷凍女',
+    icon: '🧊',
+    tagline: '手足から凍っていくオンナ',
+    color: '#6b8ebf',
+    colorLight: '#e8eff8',
+    colorDark: '#3a5a80',
+    desc: '末端の冷えから全身の代謝が落ち、脂肪を溜め込みやすくなっているタイプ。水太りの要素も持ちつつ、根本原因は冷えにあります。',
+    aruaru: [
+      '靴下を二重に履いても足が冷たい',
+      '夏でもクーラーの部屋にいると体がこわばる',
+      '温かい飲み物を飲んでもすぐ体が冷える',
+      'お風呂上がり30分で手足が冷たくなる'
+    ],
+    symptoms: ['末端冷え', '代謝ダウン', '水太り傾向', '肩こり', '低体温'],
+    advice: '冷えの改善なくしてダイエットなし。<strong>体を内側から温め、水分代謝を促す</strong>ことが鍵。漢方はこのタイプと非常に相性が良いアプローチです。',
+    showProduct: true,
+    compat: { good: '歩くスポンジ', bad: '鎧脂肪の主', comment: '歩くスポンジとは温活仲間になれる。' }
+  },
+  gacchirikata: {
+    id: 'gacchirikata',
+    name: '鎧脂肪の主',
+    icon: '🛡️',
+    tagline: '脂肪が硬すぎてつまめないオンナ',
+    color: '#d4724a',
+    colorLight: '#fbeee8',
+    colorDark: '#a04520',
+    desc: '体を触ると硬く、筋肉質だけど太っている…そんなタイプ。基礎代謝はあるものの、食べすぎとストレスで脂肪が蓄積しがちです。',
+    aruaru: [
+      '「ガタイいいね」と言われるが実は太っただけ',
+      '食べる量を減らしても体重が落ちにくい',
+      '昔スポーツをやっていた名残で体が硬い',
+      '力仕事はできるのに体が重い'
+    ],
+    symptoms: ['体が硬い', '食べすぎ', '高止まり体重', '便秘気味', 'がっちり体型'],
+    advice: 'ストレッチや有酸素運動で<strong>硬くなった筋肉と脂肪を柔らかくほぐす</strong>ことから。食事は量より質の見直しが効果的です。',
+    showProduct: false,
+    compat: { good: '人間ダム', bad: '深夜のご褒美モンスター', comment: '人間ダムと運動を始めると互いにいい刺激に。' }
+  },
+  stressbutori: {
+    id: 'stressbutori',
+    name: '深夜のご褒美モンスター',
+    icon: '🍫',
+    tagline: '疲れを食で埋めるオンナ',
+    color: '#c0902a',
+    colorLight: '#faf3e0',
+    colorDark: '#8a6518',
+    desc: '自律神経の乱れやストレスによる過食が太る原因になっているタイプ。甘いものや間食がやめられず、特にお腹周りに脂肪がつきやすい傾向。',
+    aruaru: [
+      '疲れると無意識にコンビニスイーツを買っている',
+      '夜中に急にお腹が空いて食べてしまう',
+      '忙しい時期に限って太る',
+      '食べた後に後悔するのにまた食べてしまう'
+    ],
+    symptoms: ['過食傾向', 'お腹周り', '自律神経', '睡眠の質低下', '甘いもの依存'],
+    advice: '<strong>食事の内容よりもまずストレスマネジメント</strong>が先。睡眠の質を上げ、自律神経を整えることで、過食のトリガーそのものを減らしましょう。',
+    showProduct: false,
+    compat: { good: '歩くスポンジ', bad: '鎧脂肪の主', comment: '歩くスポンジとはリラックス系の対策が合う。' }
+  },
+  yuragimix: {
+    id: 'yuragimix',
+    name: '体質迷子',
+    icon: '🎭',
+    tagline: '何が効くかわからないオンナ',
+    color: '#8a6bbf',
+    colorLight: '#f0ecf8',
+    colorDark: '#5a3a90',
+    desc: '季節の変わり目や生理周期、体調によって水太りと固太りの特徴が入れ替わるタイプ。一つの対策が効かない時期があるのが厄介。',
+    aruaru: [
+      '「先週は調子よかったのに今週ダメ」が多い',
+      '季節の変わり目に必ず体重が増える',
+      'ダイエット法がコロコロ変わる',
+      '生理前に別人みたいにむくむ'
+    ],
+    symptoms: ['周期的むくみ', '体重変動', '季節変動', '不安定な体調', 'ダイエット迷子'],
+    advice: '一つの方法に固執せず、<strong>体の状態に合わせて柔軟にアプローチ</strong>を変えることが大切。水太り傾向が出ている時期には水分代謝ケアが特に有効です。',
+    showProduct: true,
+    compat: { good: '人間ダム', bad: '歩くスポンジ', comment: '人間ダムの対策を参考にすると安定しやすい。' }
+  }
+};
+
+// ========== STATE ==========
+let currentQ = 0;
+let scores = { water:0, cold:0, kata:0, stress:0, yuragi:0 };
+
+// ========== QUIZ LOGIC ==========
+function startQuiz() {
+  document.getElementById('hero').classList.add('hidden');
+  document.getElementById('quiz-section').classList.remove('hidden');
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[currentQ];
+  const container = document.getElementById('question-container');
+  container.innerHTML = `
+    <div class="question-card">
+      <div class="q-number">QUESTION ${currentQ+1}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,i) => `
+          <button class="option-btn" onclick="selectOption(${i})">
+            <span class="icon">${o.icon}</span>
+            <span>${o.text}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  container.querySelector('.question-card').style.animation='none';
+  container.querySelector('.question-card').offsetHeight;
+  container.querySelector('.question-card').style.animation='';
+  updateProgress();
+}
+
+function selectOption(idx) {
+  const opt = questions[currentQ].opts[idx];
+  for (const [k,v] of Object.entries(opt.scores||{})) {
+    scores[k] = (scores[k]||0) + v;
+  }
+  currentQ++;
+  if (currentQ < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function updateProgress() {
+  const pct = (currentQ / questions.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${currentQ+1} / ${questions.length}`;
+}
+
+// ========== TYPE DETERMINATION ==========
+function determineType() {
+  const { water, cold, kata, stress, yuragi } = scores;
+
+  // Yuragi check: high yuragi score
+  if (yuragi >= 4 && yuragi >= kata && yuragi >= stress) return types.yuragimix;
+
+  // Stress check
+  if (stress >= 5 && stress > water && stress > kata) return types.stressbutori;
+
+  // Kata check
+  if (kata >= 5 && kata > water) return types.gacchirikata;
+
+  // Water subtypes
+  if (water >= 4) {
+    if (cold >= 4) return types.hiebutori;
+    if (water >= 7) return types.tamekomimizu;
+    return types.jinwarimizu;
+  }
+
+  // Cold dominant
+  if (cold >= 4) return types.hiebutori;
+
+  // Fallback
+  const max = Math.max(water, cold, kata, stress, yuragi);
+  if (max === kata) return types.gacchirikata;
+  if (max === stress) return types.stressbutori;
+  if (max === yuragi) return types.yuragimix;
+  if (max === cold) return types.hiebutori;
+  return types.jinwarimizu;
+}
+
+// ========== RESULT ==========
+function showResult() {
+  document.getElementById('quiz-section').classList.add('hidden');
+  const section = document.getElementById('result-section');
+  section.classList.remove('hidden');
+
+  const type = determineType();
+  const total = Object.values(scores).reduce((a,b)=>a+b,0) || 1;
+
+  const meterData = [
+    { label:'💧 水太り', val: scores.water, color:'#4a90d9' },
+    { label:'🧊 冷え', val: scores.cold, color:'#6b8ebf' },
+    { label:'🔥 固太り', val: scores.kata, color:'#d4724a' },
+    { label:'⚡ ストレス', val: scores.stress, color:'#c0902a' },
+    { label:'🌊 ゆらぎ', val: scores.yuragi, color:'#8a6bbf' },
+  ];
+  const maxScore = Math.max(...meterData.map(m=>m.val), 1);
+
+  section.innerHTML = `
+    <div class="result-section">
+      <div class="result-card" style="border-top:4px solid ${type.color}">
+        <div class="result-type-icon">${getCharImg(type.id, 160)}</div>
+        <div class="result-type-badge" style="color:${type.colorDark};background:${type.colorLight}">${type.name}</div>
+        <div class="result-title">${type.name}</div>
+        <div class="result-subtitle">${type.tagline}</div>
+
+        <div class="meter-group">
+          ${meterData.map(m => `
+            <div class="meter-row">
+              <div class="meter-label" style="color:${m.color}">${m.label}</div>
+              <div class="meter-bar-wrap">
+                <div class="meter-bar-fill" data-width="${(m.val/maxScore)*100}" style="background:${m.color}"></div>
+              </div>
+              <div class="meter-value" style="color:${m.color}">${m.val}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="aruaru-section">
+          <div class="aruaru-title">💬 こんな「あるある」ありませんか？</div>
+          <div class="aruaru-list">
+            ${type.aruaru.map(a => `<div class="aruaru-item">${a}</div>`).join('')}
+          </div>
+        </div>
+
+        <div class="result-desc">${type.advice}</div>
+
+        <div class="symptom-tags">
+          ${type.symptoms.map(s => `<span class="symptom-tag">${s}</span>`).join('')}
+        </div>
+
+        <div class="compat-section">
+          <div class="compat-title">🤝 タイプ相性</div>
+          <div class="compat-item">◎ 相性良し → <strong>${type.compat.good}</strong></div>
+          <div class="compat-item">△ 要注意 → <strong>${type.compat.bad}</strong></div>
+          <div class="compat-item" style="color:var(--text-sub);font-size:12px;margin-top:4px">${type.compat.comment}</div>
+        </div>
+      </div>
+
+      ${type.showProduct ? `
+      <div class="recommend-card">
+        <div class="rec-label">📋 あなたのタイプにおすすめ</div>
+        <div class="rec-product">
+          <div class="rec-product-img">🏺</div>
+          <div class="rec-product-info">
+            <h3>千燃之才</h3>
+            <div class="rec-cat">第2類医薬品（防已黄耆湯ベース）</div>
+            <div class="rec-points">
+              水太り・肥満症・むくみへの<strong>効能効果が認められた</strong>漢方薬。6種の生薬が水分を絞り、代謝を高め、脂肪燃焼をサポート。
+            </div>
+          </div>
+        </div>
+        <div class="rec-price">
+          <span class="original">通常価格</span>
+          <span class="sale">初回半額以下</span>
+          <span class="tax">送料無料</span>
+        </div>
+        <a href="https://dainichido.co.jp/lp/1000nen001/index.html" target="_blank" class="cta-btn">詳しくチェックする →</a>
+      </div>
+      ` : `
+      <div class="recommend-card">
+        <div class="rec-label">📋 ワンポイントアドバイス</div>
+        <div class="rec-product-info" style="padding:4px">
+          <div class="rec-points" style="line-height:1.8;font-size:14px">${type.advice}</div>
+        </div>
+      </div>
+      `}
+
+      <div class="share-card">
+        <div class="share-card-title">結果をシェアして友達も診断 👇</div>
+        <div class="share-card-sub">あなたの友達は何太り？ 相性もチェック！</div>
+        <div class="share-preview"><canvas id="share-canvas"></canvas></div>
+        <div class="share-buttons">
+          <button class="share-btn primary" onclick="shareThreads()">📱 Threadsでシェア</button>
+          <button class="share-btn" onclick="shareX()">𝕏 ポスト</button>
+          <button class="share-btn" onclick="downloadCard()">📥 画像保存</button>
+        </div>
+        <button class="retry-btn" onclick="retry()">もう一度診断する</button>
+      </div>
+    </div>
+  `;
+
+  // Animate meters
+  setTimeout(() => {
+    document.querySelectorAll('.meter-bar-fill').forEach(el => {
+      el.style.width = el.dataset.width + '%';
+    });
+  }, 300);
+
+  // Draw share card
+  setTimeout(() => drawShareCard(type), 100);
+}
+
+// ========== TYPE CHARACTERS ==========
+function getCharImg(typeId, size=120) {
+  const map = {
+    tamekomimizu: 'images/karada_dam.png',
+    jinwarimizu: 'images/karada_sponge.png',
+    hiebutori: 'images/karada_frozen.png',
+    gacchirikata: 'images/karada_armor.png',
+    stressbutori: 'images/karada_midnight.png',
+    yuragimix: 'images/karada_lost.png',
+  };
+  const src = map[typeId] || '';
+  if (!src) return '';
+  return `<img src="${src}" width="${size}" height="${size}" alt="${typeId}" style="border-radius:16px;object-fit:cover;">`;
+}
+
+// ========== SHARE CARD (Canvas) ==========
+function drawShareCard(type) {
+  const canvas = document.getElementById('share-canvas');
+  if (!canvas) return;
+  const W = 1080, H = 1080;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // BG
+  ctx.fillStyle = '#f5f0ea';
+  ctx.fillRect(0, 0, W, H);
+
+  // Accent bar top
+  const grd = ctx.createLinearGradient(0,0,W,0);
+  grd.addColorStop(0, '#4a90d9');
+  grd.addColorStop(0.5, '#2e7d6f');
+  grd.addColorStop(1, '#d4724a');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, 8);
+
+  // Card bg
+  ctx.fillStyle = '#ffffff';
+  roundRect(ctx, 60, 60, W-120, H-120, 32);
+  ctx.fill();
+  ctx.strokeStyle = '#e0d8cf';
+  ctx.lineWidth = 1;
+  roundRect(ctx, 60, 60, W-120, H-120, 32);
+  ctx.stroke();
+
+  // Type color bar
+  ctx.fillStyle = type.color;
+  ctx.fillRect(60, 60, W-120, 8);
+
+  // Badge
+  ctx.fillStyle = type.colorLight;
+  roundRect(ctx, W/2-90, 120, 180, 36, 18);
+  ctx.fill();
+  ctx.fillStyle = type.colorDark;
+  ctx.font = '600 16px "Zen Kaku Gothic New", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('カラダ診断結果', W/2, 144);
+
+  // Icon - draw character image
+  const imgMap = {
+    tamekomimizu: 'images/karada_dam.png',
+    jinwarimizu: 'images/karada_sponge.png',
+    hiebutori: 'images/karada_frozen.png',
+    gacchirikata: 'images/karada_armor.png',
+    stressbutori: 'images/karada_midnight.png',
+    yuragimix: 'images/karada_lost.png',
+  };
+  const imgSrc = imgMap[type.id];
+  if (imgSrc) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(W/2, 220, 80, 0, Math.PI*2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(img, W/2-80, 140, 160, 160);
+      ctx.restore();
+      // Circle border
+      ctx.beginPath();
+      ctx.arc(W/2, 220, 80, 0, Math.PI*2);
+      ctx.strokeStyle = type.color;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    };
+    img.src = imgSrc;
+  }
+
+  // Type name
+  ctx.fillStyle = type.colorDark;
+  ctx.font = '900 52px "Shippori Mincho", "Zen Kaku Gothic New", serif';
+  ctx.fillText(type.name, W/2, 320);
+
+  // Tagline
+  ctx.fillStyle = '#7a7067';
+  ctx.font = '500 22px "Zen Kaku Gothic New", sans-serif';
+  ctx.fillText(type.tagline, W/2, 360);
+
+  // Divider
+  ctx.strokeStyle = '#e0d8cf';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(160, 400);
+  ctx.lineTo(W-160, 400);
+  ctx.stroke();
+
+  // Aruaru (top 3)
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#2c2420';
+  ctx.font = '500 24px "Zen Kaku Gothic New", sans-serif';
+  const aruaruShow = type.aruaru.slice(0, 3);
+  aruaruShow.forEach((a, i) => {
+    const y = 450 + i * 56;
+    ctx.fillStyle = '#2e7d6f';
+    ctx.font = '700 22px "Zen Kaku Gothic New", sans-serif';
+    ctx.fillText('✓', 130, y);
+    ctx.fillStyle = '#2c2420';
+    ctx.font = '500 22px "Zen Kaku Gothic New", sans-serif';
+    // Truncate if too long
+    let text = a;
+    if (ctx.measureText(text).width > 700) {
+      while (ctx.measureText(text + '…').width > 700 && text.length > 0) {
+        text = text.slice(0, -1);
+      }
+      text += '…';
+    }
+    ctx.fillText(text, 170, y);
+  });
+
+  // Symptoms
+  ctx.textAlign = 'center';
+  const tagY = 660;
+  const tagH = 38;
+  const tagGap = 12;
+  const tagFont = '700 18px "Zen Kaku Gothic New", sans-serif';
+  ctx.font = tagFont;
+  const tagWidths = type.symptoms.map(s => ctx.measureText(s).width + 32);
+  const totalTagW = tagWidths.reduce((a,b) => a+b, 0) + (type.symptoms.length-1) * tagGap;
+  let tagX = (W - totalTagW) / 2;
+  type.symptoms.forEach((s, i) => {
+    ctx.fillStyle = '#f5f0ea';
+    roundRect(ctx, tagX, tagY, tagWidths[i], tagH, 19);
+    ctx.fill();
+    ctx.fillStyle = '#7a7067';
+    ctx.font = tagFont;
+    ctx.textAlign = 'center';
+    ctx.fillText(s, tagX + tagWidths[i]/2, tagY + 25);
+    tagX += tagWidths[i] + tagGap;
+  });
+
+  // Compat
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#7a7067';
+  ctx.font = '500 20px "Zen Kaku Gothic New", sans-serif';
+  ctx.fillText(`相性◎ → ${type.compat.good}　　相性△ → ${type.compat.bad}`, W/2, 760);
+
+  // Divider
+  ctx.strokeStyle = '#e0d8cf';
+  ctx.beginPath();
+  ctx.moveTo(160, 800);
+  ctx.lineTo(W-160, 800);
+  ctx.stroke();
+
+  // CTA
+  ctx.fillStyle = '#2c2420';
+  ctx.font = '700 26px "Zen Kaku Gothic New", sans-serif';
+  ctx.fillText('あなたは何太り？ 30秒カラダ診断', W/2, 860);
+
+  ctx.fillStyle = '#7a7067';
+  ctx.font = '500 20px "Zen Kaku Gothic New", sans-serif';
+  ctx.fillText('友達にもシェアして相性チェック！', W/2, 895);
+
+  // URL placeholder
+  ctx.fillStyle = type.color;
+  roundRect(ctx, W/2-160, 920, 320, 48, 24);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '700 20px "Zen Kaku Gothic New", sans-serif';
+  ctx.fillText('▶ 診断はこちら', W/2, 950);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+// ========== SHARING ==========
+function getShareText(type) {
+  return `30秒カラダ診断の結果…\n\n【${type.name}】\n${type.tagline}\n\nBBA全員やってみて\n▶ 診断はこちら [URL]`;
+}
+
+function shareThreads() {
+  const type = determineType();
+  const text = getShareText(type);
+  window.open('https://www.threads.net/intent/post?text=' + encodeURIComponent(text), '_blank');
+}
+
+function shareX() {
+  const type = determineType();
+  const text = getShareText(type);
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+}
+
+function downloadCard() {
+  const canvas = document.getElementById('share-canvas');
+  if (!canvas) return;
+  const link = document.createElement('a');
+  link.download = 'karada-shindan-result.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function retry() {
+  currentQ = 0;
+  scores = { water:0, cold:0, kata:0, stress:0, yuragi:0 };
+  document.getElementById('result-section').classList.add('hidden');
+  document.getElementById('result-section').innerHTML = '';
+  document.getElementById('hero').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
